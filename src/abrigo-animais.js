@@ -3,47 +3,38 @@ import { podeAbrigar } from "./utils/validacoes";
 
 class AbrigoAnimais {
   encontraPessoas(brinquedosPessoa1, brinquedosPessoa2, ordemAnimais) {
-    {
-      const pessoas = [
-        {
-          nome: "pessoa 1",
-          brinquedos: brinquedosPessoa1
-            .split(",")
-            .map((b) => b.trim().toUpperCase()),
-        },
-        {
-          nome: "pessoa 2",
-          brinquedos: brinquedosPessoa2
-            .split(",")
-            .map((b) => b.trim().toUpperCase()),
-        },
-      ];
+    const pessoas = [brinquedosPessoa1, brinquedosPessoa2].map(
+      (entrada, i) => ({
+        brinquedos: entrada.split(",").map((b) => b.trim().toUpperCase()),
+        id: `pessoa ${i + 1}`,
+      })
+    );
 
-      const ordem = ordemAnimais.split(",").map((ref) => ref.trim());
+    const ordem = ordemAnimais.split(",").map((ref) => ref.trim());
+    const lista = [];
 
-      const lista = [];
-      for (const ref of ordem) {
-        const animal = animais.find((a) => a.nome === ref);
-        if (!animal) {
-          return { erro: "Animal inválido", lista: undefined };
-        }
-      }
-
-      pessoas.forEach((pessoa, index) => {
-        const aptos = [];
-
-        ordem.forEach((ref) => {
-          const animal = animais.find((a) => a.nome === ref);
-          if (podeAbrigar(pessoa, animal, aptos)) {
-            aptos.push(`${animal.nome} - pessoa ${index + 1}`);
-          }
-        });
-
-        lista.push(...aptos);
-      });
-
-      return { erro: false, lista };
+    for (const nome of ordem) {
+      const animal = animais.find((a) => a.nome === nome);
+      if (!animal) return { erro: "Animal inválido", lista: undefined };
     }
+
+    pessoas.forEach((pessoa) => {
+      const adotados = [];
+
+      ordem.forEach((nome) => {
+        const animal = animais.find((a) => a.nome === nome);
+        const jaAtribuidos = adotados.map((n) =>
+          animais.find((a) => a.nome === n)
+        );
+
+        if (podeAbrigar(pessoa, animal, jaAtribuidos)) {
+          adotados.push(animal.nome);
+          lista.push(`${animal.nome} - ${pessoa.id}`);
+        }
+      });
+    });
+
+    return { erro: false, lista };
   }
 }
 
