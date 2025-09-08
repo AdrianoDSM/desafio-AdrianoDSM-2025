@@ -61,9 +61,13 @@ export function houveEmpate(animal, pessoa1, pessoa2, jaAtribuidos1, jaAtribuido
 export function gatoNaoDivide(animalNovo, animaisJaAtribuidos) {
   if (animalNovo.especie !== "gato") return false;
 
+  const brinquedosGato = new Set(animalNovo.brinquedosFavoritos);
+
   for (const outro of animaisJaAtribuidos) {
-    if (temConflitoDeBrinquedos(outro.brinquedosFavoritos, animalNovo.brinquedosFavoritos)) {
-      return true;
+    for (const brinquedo of outro.brinquedosFavoritos) {
+      if (brinquedosGato.has(brinquedo)) {
+        return true;
+      }
     }
   }
 
